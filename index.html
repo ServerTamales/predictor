@@ -108,14 +108,14 @@ canvas{display:block;width:100%;height:190px}
 .pos .track i,.up .track i{background:var(--up)} .neg .track i,.down .track i{background:var(--down)}
 
 .rows{display:flex;flex-direction:column;gap:8px}
-.row{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:12px;padding:11px 12px;display:grid;grid-template-columns:58px 1fr auto;gap:4px 12px;align-items:center}
+.row{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:12px;padding:11px 12px;display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:4px 12px;align-items:center}
 .row.up{border-left-color:var(--up)} .row.down{border-left-color:var(--down)}
 .h{font:800 17px var(--display);grid-row:span 2}
 .call{font:600 16px var(--mono);font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
 .call .d{letter-spacing:.03em}
 .up .call .d,.up .call .a{color:var(--up)} .down .call .d,.down .call .a{color:var(--down)}
 .call small{font:400 12px var(--body);color:var(--muted)}
-.rec{font:500 13px var(--mono);font-variant-numeric:tabular-nums;text-align:right;color:var(--muted)}
+.rec{font:500 13px var(--mono);font-variant-numeric:tabular-nums;text-align:right;color:var(--muted);max-width:104px}
 .rec b{color:var(--ink);font-size:15px}
 .row .track{grid-column:2 / 4;margin-top:0}
 .round{grid-column:2 / 4;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;justify-content:space-between;font-variant-numeric:tabular-nums}
@@ -128,10 +128,38 @@ canvas{display:block;width:100%;height:190px}
 .stats .k{font-size:12px;color:var(--muted)}
 .stats .v{font:600 15px var(--mono);font-variant-numeric:tabular-nums}
 .stats .v small{font:400 12px var(--body);color:var(--muted)}
+/* simulador */
+.bank{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 12px}
+.bank .k{font-size:12px;color:var(--muted)}
+.bank .v{font:600 17px var(--mono);font-variant-numeric:tabular-nums}
+.bank .v.pos{color:var(--up)} .bank .v.neg{color:var(--down)}
+.amt label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px}
+.amtrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.amtrow input{font:600 16px var(--mono);font-variant-numeric:tabular-nums;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:8px 10px;width:96px}
+.chip{font:600 13px var(--mono);border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:99px;padding:7px 12px;cursor:pointer}
+.buy{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bet{border:0;border-radius:99px;padding:12px 10px;cursor:pointer;font:700 15px var(--body);display:flex;flex-direction:column;align-items:center;gap:1px;color:#06231b}
+.bet small{font:500 12px var(--mono);opacity:.85}
+.bet.yes{background:var(--up)} .bet.no{background:var(--down);color:#2a0905}
+.bet:disabled{opacity:.4;cursor:not-allowed}
+.switch{display:flex;align-items:center;gap:10px;font-weight:600;cursor:pointer}
+.switch input{width:20px;height:20px;accent-color:var(--up)}
+.rules{font-size:13px;color:var(--muted);margin:0;padding-left:18px}
+.pos{display:flex;flex-direction:column;gap:6px}
+.pos .it{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-left:4px solid var(--up);border-radius:10px;padding:8px 10px;font-size:13px;font-variant-numeric:tabular-nums}
+.pos .it.no{border-left-color:var(--down)}
+.pos .it b{font-family:var(--mono)}
+#curve{height:120px}
+.hist{display:flex;flex-direction:column;font-size:13px;font-variant-numeric:tabular-nums}
+.hist .r{display:grid;grid-template-columns:auto 1fr auto;gap:8px;padding:6px 0;border-top:1px solid var(--line);align-items:baseline}
+.hist .r:first-child{border-top:0}
+.hist .r .w{color:var(--up);font:600 13px var(--mono)} .hist .r .l{color:var(--down);font:600 13px var(--mono)} .hist .r .n{color:var(--muted);font:600 13px var(--mono)}
+.hist .r span:nth-child(2){color:var(--muted)}
+[hidden]{display:none!important}
 footer{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:10px}
 footer p{margin:0;max-width:65ch}
 .foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-@media (max-width:420px){.kv .v{font-size:19px}.side .p{font-size:24px}.row{grid-template-columns:50px 1fr auto}.inputs{grid-template-columns:1fr 1fr}.inputs label:first-child{grid-column:1 / 3}}
+@media (max-width:420px){.kv .v{font-size:19px}.side .p{font-size:24px}.row{grid-template-columns:50px minmax(0,1fr) auto}.inputs{grid-template-columns:1fr 1fr}.inputs label:first-child{grid-column:1 / 3}}
 @media (prefers-reduced-motion:reduce){#now{transition:none}}
 </style>
 </head>
@@ -176,6 +204,42 @@ footer p{margin:0;max-width:65ch}
     <div class="chips" id="chips"></div>
   </section>
 
+  <section class="panel" aria-labelledby="sim-title">
+    <div class="ph">
+      <h2 id="sim-title">Simulador · dinero ficticio</h2>
+      <div class="seg small" role="group" aria-label="Banca">
+        <button type="button" id="tab-me" aria-pressed="true">Tú</button>
+        <button type="button" id="tab-algo" aria-pressed="false">Algoritmo</button>
+      </div>
+    </div>
+    <div class="bank" id="bank"></div>
+    <div id="sim-me">
+      <div class="amt"><label for="amt">Monto por apuesta ($)</label>
+        <div class="amtrow"><input id="amt" inputmode="decimal" autocomplete="off" value="1">
+          <button type="button" class="chip" data-a="1">$1</button><button type="button" class="chip" data-a="5">$5</button><button type="button" class="chip" data-a="10">$10</button></div>
+      </div>
+      <div class="buy" style="margin-top:10px">
+        <button type="button" class="bet yes" id="buy-yes">Comprar SUBE<small id="buy-yes-s">—</small></button>
+        <button type="button" class="bet no" id="buy-no">Comprar BAJA<small id="buy-no-s">—</small></button>
+      </div>
+      <div class="meta" id="buy-msg" style="margin-top:8px"></div>
+    </div>
+    <div id="sim-algo" hidden>
+      <label class="switch" for="algo-on"><input type="checkbox" id="algo-on"> Algoritmo apostando</label>
+      <ul class="rules">
+        <li>Apuesta solo con precios de Kalshi frescos y ventaja de 5% o más.</li>
+        <li>Tamaño: un cuarto de Kelly, máximo 10% de su banca por apuesta.</li>
+        <li>Una apuesta por ventana, entre 14 y 1 minuto antes del cierre.</li>
+        <li>Solo opera el activo que tienes abierto y mientras la app está abierta.</li>
+      </ul>
+      <div class="verdict" id="algo-msg" style="margin-top:8px">Apagado.</div>
+    </div>
+    <div class="pos" id="positions"></div>
+    <canvas id="curve" aria-label="Evolución de las dos bancas"></canvas>
+    <div class="hist" id="hist"></div>
+    <div class="foot"><span class="meta" id="sim-note"></span><button class="ghost" id="sim-reset" type="button">Reiniciar esta banca</button></div>
+  </section>
+
   <section class="panel" aria-labelledby="ch-title">
     <div class="ph">
       <h2 id="ch-title">Precio <span class="pill" id="pill"><i></i><span id="status">Conectando…</span></span></h2>
@@ -200,6 +264,7 @@ footer p{margin:0;max-width:65ch}
   <footer>
     <p><b>Cómo calcula el contrato.</b> Kalshi paga SUBE si el promedio del índice CF Benchmarks en el último minuto antes del cierre es igual o mayor que el objetivo. La app estima esa probabilidad con la distancia al objetivo, el tiempo restante y la volatilidad reciente, y le suma la señal aprendida del flujo de órdenes. El precio de la app viene de Coinbase, que puede diferir unos dólares del índice de Kalshi.</p>
     <p><b>Ventaja.</b> Con los multiplicadores de Kalshi (ya incluyen la comisión) la app calcula cuánto ganarías o perderías en promedio por cada dólar. Solo muestra señal cuando la ventaja supera 5%. El historial registra cada ventana para que veas si las señales habrían ganado dinero.</p>
+    <p><b>Simulador.</b> Funciona como Kalshi con dinero ficticio: compras contratos de $1 al precio de venta de Kalshi más su comisión, puedes vender antes del cierre al precio de compra, y al cierre se paga con el resultado oficial de Kalshi. Tú y el algoritmo tienen bancas separadas de $50 para comparar.</p>
     <p><b>Qué esperar.</b> Kalshi suele poner precios cercanos a esta misma cuenta, así que las ventajas reales son raras y pequeñas. Fíate del historial solo con 30 contratos o más. No es asesoría financiera.</p>
     <div class="foot"><span id="trained"></span><button class="ghost" id="wipe" type="button">Borrar historial</button></div>
   </footer>
@@ -331,6 +396,7 @@ var SYMS=[
   {id:'ETH',cb:'ETH-USD',kr:'ETH/USD',krr:'ETHUSD',bn:'ethusdt',ks:'KXETH15M',sim:3200},
   {id:'SOL',cb:'SOL-USD',kr:'SOL/USD',krr:'SOLUSD',bn:'solusdt',ks:'KXSOL15M',sim:150}
 ];
+var RELAY=''; /* dirección del intermediario de Cloudflare */
 var RANGES=[['5M',300],['15M',900],['1H',3600],['6H',21600]];
 var $=function(id){return document.getElementById(id)};
 var sym=SYMS[0],eng,M,mode='connecting',feedName='',gen=0,ws=null,feedIdx=0,tried=0,everLive=false,simTimer=null,lastSave=0,R=null,resub=null,lastResub=0,badBook=0,simEng=false;
@@ -396,7 +462,7 @@ function kalshiPoll(){
   var now=Date.now();
   if(document.hidden||now<KS.next||KS.busy)return;
   KS.busy=true;var s=sym;
-  fetch('https://api.elections.kalshi.com/trade-api/v2/markets?series_ticker='+s.ks+'&status=open&limit=20',{cache:'no-store'})
+  fetch(RELAY?RELAY+'?series='+s.ks:'https://api.elections.kalshi.com/trade-api/v2/markets?series_ticker='+s.ks+'&status=open&limit=20',{cache:'no-store'})
   .then(function(r){if(!r.ok)throw new Error('http');return r.json()})
   .then(function(d){
     KS.busy=false;if(s!==sym)return;
@@ -410,7 +476,7 @@ function kalshiPoll(){
     var m=best.m;
     function px(dl,c){var v=m[dl]!=null?+m[dl]:m[c]!=null?+m[c]/100:null;return v>0&&v<1?v:null}
     KS.m={ticker:m.ticker,close:best.ct,K:+m.floor_strike>0?+m.floor_strike:null,
-          ya:px('yes_ask_dollars','yes_ask'),na:px('no_ask_dollars','no_ask'),yb:px('yes_bid_dollars','yes_bid')};
+          ya:px('yes_ask_dollars','yes_ask'),na:px('no_ask_dollars','no_ask'),yb:px('yes_bid_dollars','yes_bid'),nb:px('no_bid_dollars','no_bid')};
     KS.state=Math.abs(best.ct-we)<5?'ok':'other';KS.t=Date.now();KS.next=Date.now()+3000;
   })
   .catch(function(){KS.busy=false;if(s!==sym)return;KS.state='blocked';KS.next=Date.now()+120000});
@@ -647,6 +713,172 @@ function statsOf(){
     });
   });
   return o;
+}
+
+/* ---------- simulador ---------- */
+var SIM,simTab='me';
+function newBank(){return {cash:50,start:50,pos:[],hist:[],curve:[50]}}
+function simLoad(){SIM=ls('sim')||{me:newBank(),algo:newBank(),algoOn:false,msg:''};if(!SIM.me)SIM.me=newBank();if(!SIM.algo)SIM.algo=newBank()}
+function simSave(){ls('sim',SIM)}
+function cent(x){return Math.round(x*100)/100}
+function ceilCent(x){return Math.ceil(x*100-1e-9)/100}
+/* precios para operar: de Kalshi (con comisión aparte) o de los multiplicadores escritos (comisión incluida) */
+function quotes(){
+  if(!CT||!(CT.tau>=1))return null;
+  if(KS.state==='ok'&&KS.m&&Date.now()-KS.t<15000)
+    return {src:'Kalshi',ticker:KS.m.ticker,yes:KS.m.ya,no:KS.m.na,yb:KS.m.yb,nb:KS.m.nb,fee:true};
+  var mk=CT.mk;
+  if(mk&&mk.src==='escrito'&&mk.fresh)return {src:'escrito',ticker:null,yes:mk.up>1?1/mk.up:null,no:mk.dn>1?1/mk.dn:null,fee:false};
+  return null;
+}
+function feeOf(n,p){return ceilCent(0.07*n*p*(1-p))}
+function costOf(n,p,fee){return cent(n*p)+(fee?feeOf(n,p):0)}
+function fitN(amount,p,fee){
+  if(!(p>0&&p<1))return 0;
+  var n=Math.floor(amount/(p*(fee?1+0.07*(1-p):1))+1e-9);
+  while(n>0&&costOf(n,p,fee)>amount+1e-9)n--;
+  return n;
+}
+function buy(key,side,amount){
+  var b=SIM[key],q=quotes();
+  if(!q)return 'Sin precios: conecta Kalshi o escribe los multiplicadores.';
+  var p=q[side];if(!p)return 'Kalshi no ofrece ese lado ahora.';
+  if(CT.tau<1)return 'La ventana ya cerró.';
+  if(!CT.tg)return 'Falta el objetivo de esta ventana.';
+  amount=Math.min(amount,b.cash);
+  var n=fitN(amount,p,q.fee);
+  if(n<1)return 'El monto no alcanza para 1 contrato ('+Math.round(p*100)+'¢).';
+  var cost=costOf(n,p,q.fee);
+  b.cash=cent(b.cash-cost);
+  b.pos.push({id:Date.now()+Math.random(),sym:sym.id,ticker:q.ticker,ws:CT.w.start,we:CT.w.end,side:side,n:n,px:p,cost:cost,K:CT.tg.K,src:q.src,t:Date.now()});
+  simSave();
+  return 'Compraste '+n+' '+(side==='yes'?'SUBE':'BAJA')+' a '+Math.round(p*100)+'¢ · costo $'+cost.toFixed(2)+' · cobras $'+n.toFixed(2)+' si aciertas.';
+}
+function closePos(b,pos,res,how,proceeds){
+  b.pos.splice(b.pos.indexOf(pos),1);
+  var pay=how==='vendida'?proceeds:how==='anulada'?pos.cost:res?pos.n:0;
+  b.cash=cent(b.cash+pay);
+  b.hist.unshift({t:Date.now(),sym:pos.sym,ws:pos.ws,side:pos.side,n:pos.n,px:pos.px,cost:pos.cost,pnl:cent(pay-pos.cost),how:how,src:pos.rsrc||''});
+  if(b.hist.length>300)b.hist.pop();
+  b.curve.push(b.cash+b.pos.reduce(function(s,p){return s+p.cost},0));if(b.curve.length>500)b.curve.shift();
+  simSave();
+}
+function sell(key,id){
+  var b=SIM[key],pos=b.pos.filter(function(p){return p.id===id})[0],q=quotes();
+  if(!pos)return;
+  if(!q||q.src!=='Kalshi'||pos.sym!==sym.id||pos.we!==CT.w.end)return 'Vender necesita los precios de Kalshi de esta ventana.';
+  var bid=pos.side==='yes'?q.yb:q.nb;if(!(bid>0))return 'Ahora nadie compra ese lado.';
+  var pr=cent(pos.n*bid)-feeOf(pos.n,bid);
+  closePos(b,pos,null,'vendida',Math.max(0,pr));
+  return 'Vendiste '+pos.n+' a '+Math.round(bid*100)+'¢.';
+}
+var settleBusy={};
+function settleAll(){
+  var now=Date.now()/1000;
+  ['me','algo'].forEach(function(key){
+    SIM[key].pos.slice().forEach(function(pos){
+      if(now<pos.we+3)return;
+      if(RELAY&&pos.ticker&&now<pos.we+900){
+        if(settleBusy[pos.id]||(pos.qn&&now<pos.qn))return;
+        settleBusy[pos.id]=1;pos.qn=now+10;
+        fetch(RELAY+'?ticker='+encodeURIComponent(pos.ticker),{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){
+          var m=d.market||d,r=String(m.result||'').toLowerCase();
+          if((r==='yes'||r==='no')&&SIM[key].pos.indexOf(pos)>=0){pos.rsrc='Kalshi';closePos(SIM[key],pos,(r==='yes')===(pos.side==='yes'),'liquidada')}
+        }).catch(function(){}).then(function(){delete settleBusy[pos.id]});
+        return;
+      }
+      if(pos.sym===sym.id){
+        var a=avgH(pos.we-60,pos.we);
+        if(a.n>=40){pos.rsrc='estimado';closePos(SIM[key],pos,(a.avg>=pos.K)===(pos.side==='yes'),'liquidada');return}
+      }
+      if(now>pos.we+86400){pos.rsrc='sin datos';closePos(SIM[key],pos,null,'anulada')}
+    });
+  });
+}
+function algoStep(){
+  var b=SIM.algo;
+  if(!SIM.algoOn){SIM.msg='Apagado.';return}
+  if(mode!=='live'){SIM.msg='Esperando precio en vivo.';return}
+  var q=quotes();
+  if(!q||q.src!=='Kalshi'){SIM.msg='Esperando precios de Kalshi (el algoritmo no usa datos escritos a mano).';return}
+  if(!CT||CT.p==null||!CT.vol||CT.vol.thin){SIM.msg='Midiendo la volatilidad.';return}
+  if(b.pos.some(function(p){return p.sym===sym.id&&p.ws===CT.w.start})||b.hist.some(function(h){return h.sym===sym.id&&h.ws===CT.w.start})){SIM.msg='Ya apostó en esta ventana.';return}
+  if(CT.tau>840||CT.tau<60){SIM.msg=CT.tau>840?'Espera al minuto 1 de la ventana.':'Último minuto: no apuesta.';return}
+  var best=null;
+  [['yes',CT.p],['no',1-CT.p]].forEach(function(s){
+    var p=q[s[0]];if(!(p>0&&p<1))return;
+    var c=p*(1+0.07*(1-p)),ev=s[1]/c-1;
+    if(!best||ev>best.ev)best={side:s[0],prob:s[1],c:c,ev:ev,p:p};
+  });
+  if(!best||best.ev<0.05){SIM.msg='Sin ventaja suficiente'+(best?' (mejor: '+pct(best.ev)+')':'')+'.';return}
+  var f=(best.prob-best.c)/(1-best.c),stake=Math.min(0.25*f*b.cash,0.10*b.cash);
+  if(stake<costOf(1,best.p,true)){
+    if(costOf(1,best.p,true)<=0.10*b.cash)stake=costOf(1,best.p,true);
+    else{SIM.msg='Ventaja '+pct(best.ev)+', pero 1 contrato supera su límite de riesgo.';return}
+  }
+  var r=buy('algo',best.side,stake);
+  SIM.msg='Ventaja '+pct(best.ev)+' en '+(best.side==='yes'?'SUBE':'BAJA')+'. '+r;
+}
+function drawCurve(){
+  var c=$('curve'),dpr=window.devicePixelRatio||1,Wd=c.clientWidth,Hd=c.clientHeight;if(!Wd)return;
+  if(c.width!==Math.round(Wd*dpr)||c.height!==Math.round(Hd*dpr)){c.width=Math.round(Wd*dpr);c.height=Math.round(Hd*dpr)}
+  var g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,Wd,Hd);
+  var cs=getComputedStyle(document.documentElement),col=function(n){return cs.getPropertyValue(n).trim()};
+  var A=SIM.me.curve,B=SIM.algo.curve,all=A.concat(B,[SIM.me.start,SIM.algo.start]),lo=Math.min.apply(null,all),hi=Math.max.apply(null,all);
+  if(hi-lo<2){hi+=1;lo-=1}
+  var n=Math.max(A.length,B.length,2),pT=12,pB=14,y=function(v){return pT+(Hd-pT-pB)*(1-(v-lo)/(hi-lo))},x=function(i){return 4+(Wd-8)*i/(n-1)};
+  g.strokeStyle=col('--line');g.setLineDash([3,3]);g.beginPath();g.moveTo(0,y(50));g.lineTo(Wd,y(50));g.stroke();g.setLineDash([]);
+  [[A,col('--accent'),'Tú'],[B,col('--target'),'Algoritmo']].forEach(function(s,k){
+    var d=s[0];if(d.length<1)return;g.strokeStyle=s[1];g.lineWidth=2;g.beginPath();
+    d.forEach(function(v,i){i?g.lineTo(x(i),y(v)):g.moveTo(x(i),y(v))});g.stroke();
+    g.fillStyle=s[1];g.font='600 11px "IBM Plex Mono",monospace';g.fillText(s[2]+' $'+d[d.length-1].toFixed(2),4+k*130,Hd-2);
+  });
+  g.fillStyle=col('--muted');g.font='11px "IBM Plex Mono",monospace';g.fillText('$'+hi.toFixed(0),Wd-g.measureText('$'+hi.toFixed(0)).width-2,10);
+}
+function renderSim(){
+  var b=SIM[simTab],open=b.pos.reduce(function(s,p){return s+p.cost},0),val=b.cash+open,pnl=val-b.start,won=b.hist.filter(function(h){return h.pnl>0}).length;
+  var h='<div><div class="k">Disponible</div><div class="v">$'+b.cash.toFixed(2)+'</div></div>'+
+        '<div><div class="k">En juego</div><div class="v">$'+open.toFixed(2)+'</div></div>'+
+        '<div><div class="k">Resultado</div><div class="v '+(pnl>0.004?'pos':pnl<-0.004?'neg':'')+'">'+(pnl>=0?'+':'−')+'$'+Math.abs(pnl).toFixed(2)+'</div></div>'+
+        '<div><div class="k">Apuestas</div><div class="v">'+b.hist.length+'</div></div>'+
+        '<div><div class="k">Ganadas</div><div class="v">'+(b.hist.length?Math.round(100*won/b.hist.length)+'%':'—')+'</div></div>'+
+        '<div><div class="k">Multiplicó</div><div class="v">×'+(val/b.start).toFixed(2)+'</div></div>';
+  if($('bank').innerHTML!==h)$('bank').innerHTML=h;
+  var q=quotes(),amt=num($('amt').value)||0;
+  ['yes','no'].forEach(function(s){
+    var p=q&&q[s],n=p?fitN(Math.min(amt,SIM.me.cash),p,q.fee):0,el=$('buy-'+s);
+    el.disabled=!(n>=1);
+    txt($('buy-'+s+'-s'),p?Math.round(p*100)+'¢'+(n>=1?' · '+n+' contr. → $'+n.toFixed(2):''):'sin precio');
+  });
+  txt($('algo-msg'),SIM.msg||'');$('algo-on').checked=!!SIM.algoOn;
+  var ph=b.pos.map(function(p){
+    var canSell=simTab==='me'&&KS.state==='ok'&&p.sym===sym.id&&CT&&p.we===CT.w.end;
+    var live='';if(p.sym===sym.id&&CT&&p.we===CT.w.end&&CT.p!=null){var pw=p.side==='yes'?CT.p:1-CT.p;live=' · prob. de cobrar '+Math.round(pw*100)+'%'}
+    return '<div class="it'+(p.side==='no'?' no':'')+'"><span><b>'+p.sym+' '+(p.side==='yes'?'SUBE':'BAJA')+'</b> '+p.n+' a '+Math.round(p.px*100)+'¢ · cierra '+hhmm(p.we)+live+'</span>'+
+      (canSell?'<button type="button" class="chip" data-sell="'+p.id+'">Vender</button>':'<span class="meta">'+(Date.now()/1000>p.we?'liquidando…':'en juego')+'</span>')+'</div>';
+  }).join('');
+  if($('positions').innerHTML!==ph)$('positions').innerHTML=ph;
+  var hh=b.hist.slice(0,15).map(function(x){
+    var c=x.how==='anulada'?'n':x.pnl>0?'w':'l';
+    return '<div class="r"><b>'+hhmm(x.ws+900)+'</b><span>'+x.sym+' '+(x.side==='yes'?'SUBE':'BAJA')+' · '+x.n+' a '+Math.round(x.px*100)+'¢ · '+x.how+(x.src?' ('+x.src+')':'')+'</span><span class="'+c+'">'+(x.pnl>=0?'+':'−')+'$'+Math.abs(x.pnl).toFixed(2)+'</span></div>';
+  }).join('')||'<div class="meta">Todavía no hay apuestas cerradas en esta banca.</div>';
+  if($('hist').innerHTML!==hh)$('hist').innerHTML=hh;
+  txt($('sim-note'),q?'Precios: '+q.src+(q.fee?' + comisión':' (multiplicadores, comisión incluida)'):'Sin precios para operar.');
+  drawCurve();
+}
+function buildSim(){
+  function tab(k){simTab=k;$('tab-me').setAttribute('aria-pressed',k==='me');$('tab-algo').setAttribute('aria-pressed',k==='algo');$('sim-me').hidden=k!=='me';$('sim-algo').hidden=k!=='algo';renderSim()}
+  $('tab-me').onclick=function(){tab('me')};$('tab-algo').onclick=function(){tab('algo')};
+  document.querySelectorAll('.chip[data-a]').forEach(function(b){b.onclick=function(){$('amt').value=b.dataset.a;renderSim()}});
+  $('buy-yes').onclick=function(){txt($('buy-msg'),buy('me','yes',num($('amt').value)||0));renderSim()};
+  $('buy-no').onclick=function(){txt($('buy-msg'),buy('me','no',num($('amt').value)||0));renderSim()};
+  $('positions').addEventListener('click',function(e){var id=e.target.dataset&&e.target.dataset.sell;if(id){txt($('buy-msg'),sell('me',+id)||'');renderSim()}});
+  $('algo-on').onchange=function(){SIM.algoOn=this.checked;simSave();algoStep();renderSim()};
+  var armed=0;
+  $('sim-reset').onclick=function(){
+    if(Date.now()-armed<4000){SIM[simTab]=newBank();simSave();this.textContent='Reiniciar esta banca';armed=0;renderSim()}
+    else{armed=Date.now();this.textContent='Toca otra vez: vuelve a $50'}
+  };
 }
 
 /* ---------- interfaz ---------- */
@@ -887,26 +1119,28 @@ function tick(){
   contract(now);
   if(mode==='live')logWindow(sec);
   kalshiPoll();
+  settleAll();algoStep();
   if(now-lastSave>15000){lastSave=now;saveAll()}
 }
-var lastRead=0,lastPaint=0,lastDraw=0,lastStats=0;
+var lastRead=0,lastPaint=0,lastDraw=0,lastStats=0,lastSim=0;
 function paint(){
   var now=Date.now();
   if(now-lastRead>=250){lastRead=now;depth();readings(now)}
   if(now-lastPaint>=90){lastPaint=now;render(now)}
   if(now-lastDraw>=(range>3600?2000:range>900?500:200)){lastDraw=now;draw()}
   if(now-lastStats>=2000){lastStats=now;renderStats();fillInputs()}
+  if(now-lastSim>=500){lastSim=now;renderSim()}
 }
 function frame(){requestAnimationFrame(frame);paint()}
 loadAll();
 var rr=ls('range');if(RANGES.some(function(r){return r[1]===rr}))range=rr;
 eng=createEngine(ls('pred3-'+sym.id));
-build();fillInputs();connect();backfill();tick();paint();
+simLoad();build();buildSim();fillInputs();connect();backfill();tick();paint();
 setInterval(tick,200);
 setInterval(function(){if(document.hidden){depth();readings(Date.now())}},1000);
 requestAnimationFrame(frame);
-window.addEventListener('resize',draw);
-window.addEventListener('pagehide',saveAll);
+window.addEventListener('resize',function(){draw();drawCurve()});
+window.addEventListener('pagehide',function(){saveAll();simSave()});
 document.addEventListener('visibilitychange',function(){if(document.hidden)saveAll();else{backfill();KS.next=0}});
 if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(function(){});
 })();
